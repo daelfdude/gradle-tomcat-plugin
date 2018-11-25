@@ -36,7 +36,7 @@ abstract class BaseTomcatServerImpl implements TomcatServer {
     }
 
     @Override
-    void addWebappResource(File resource) {
+    void addWebappResource(File resource, boolean isPreResource) {
         context.loader.addRepository(resource.toURI().toURL().toString())
     }
 

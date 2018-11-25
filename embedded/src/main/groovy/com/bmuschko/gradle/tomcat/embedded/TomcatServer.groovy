@@ -37,7 +37,7 @@ interface TomcatServer {
     void configureDefaultWebXml(File webDefaultXml)
     void configureUser(TomcatUser user)
     void setConfigFile(URL configFile)
-    void addWebappResource(File resource)
+    void addWebappResource(File resource, boolean isPreResource)
     void addStartUpLifecycleListener(CountDownLatch startupBarrier, boolean daemon)
     void start()
     void stop()

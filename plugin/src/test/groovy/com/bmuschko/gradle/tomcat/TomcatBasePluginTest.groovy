@@ -66,6 +66,7 @@ class TomcatBasePluginTest extends Specification {
             task.ajpPort == 8009
             task.ajpProtocol == 'org.apache.coyote.ajp.AjpProtocol'
             task.users.size() == 0
+            task.preResourceRegex == extension.preResourceRegex
     }
 
     def "Can create task of type TomcatRunWar"() {

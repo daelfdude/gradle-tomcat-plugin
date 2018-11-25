@@ -64,6 +64,7 @@ class TomcatPluginTest extends Specification {
             !task.webAppSourceDirectory
             task.ajpPort == 8009
             task.ajpProtocol == 'org.apache.coyote.ajp.AjpProtocol'
+            task.preResourceRegex == null
     }
 
     def "Creates and preconfigures tomcatRunWar task"() {
@@ -133,6 +134,7 @@ class TomcatPluginTest extends Specification {
                 httpProtocol = 'org.apache.coyote.http11.Http11NioProtocol'
                 httpsProtocol = 'org.apache.coyote.http11.Http11AprProtocol'
                 ajpProtocol = 'org.apache.coyote.ajp.RandomAjpProtocol'
+                preResourceRegex = 'bob|alice'
 
                 users {
                     user {
@@ -160,6 +162,7 @@ class TomcatPluginTest extends Specification {
             tomcatRunTask.httpsProtocol == 'org.apache.coyote.http11.Http11AprProtocol'
             tomcatRunTask.ajpProtocol == 'org.apache.coyote.ajp.RandomAjpProtocol'
             tomcatRunTask.users.size() == 2
+            tomcatRunTask.preResourceRegex == 'bob|alice'
             TomcatUser tomcatUser1 = tomcatRunTask.users[0]
             tomcatUser1.username == 'user1'
             tomcatUser1.password == 'pwd1'
@@ -179,6 +182,7 @@ class TomcatPluginTest extends Specification {
             tomcatRunWarTask.httpProtocol == 'org.apache.coyote.http11.Http11NioProtocol'
             tomcatRunWarTask.httpsProtocol == 'org.apache.coyote.http11.Http11AprProtocol'
             tomcatRunWarTask.ajpProtocol == 'org.apache.coyote.ajp.RandomAjpProtocol'
+            tomcatRunWarTask.preResourceRegex == 'bob|alice'
             TomcatStop tomcatStopTask = project.tasks.getByName(TomcatPlugin.TOMCAT_STOP_TASK_NAME)
             tomcatStopTask.stopPort == 9081
             tomcatStopTask.stopKey == 'myStopKey'

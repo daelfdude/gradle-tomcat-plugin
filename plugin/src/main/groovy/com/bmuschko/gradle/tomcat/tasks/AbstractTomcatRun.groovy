@@ -30,6 +30,7 @@ import org.gradle.api.tasks.*
 
 import java.util.concurrent.CountDownLatch
 import java.util.logging.Level
+import java.util.regex.Pattern
 
 import static com.bmuschko.gradle.tomcat.internal.LoggingHandler.withJdkFileLogger
 
@@ -204,6 +205,13 @@ abstract class AbstractTomcatRun extends Tomcat {
     @Input
     @Optional
     List<TomcatUser> users = []
+    
+    /**
+     * Specifies the regex to determine whether a jar is a PreResource. Defaults to empty
+     */
+    @Input
+    @Optional
+    String preResourceRegex
 
     @Internal
     def server
@@ -213,6 +221,9 @@ abstract class AbstractTomcatRun extends Tomcat {
 
     @Internal
     URL resolvedConfigFile
+    
+    @Internal
+    Pattern preResourcePattern = null
 
     AbstractTomcatRun() {
         outputs.upToDateWhen { false }
@@ -239,6 +250,10 @@ abstract class AbstractTomcatRun extends Tomcat {
      * Validates configuration and throws an exception if
      */
     protected void validateConfiguration() {
+    
+    	preResourcePattern = java.util.Optional.ofNullable(getPreResourceRegex()).map{it -> Pattern.compile(it)}.orElse(null);
+    	logger.info "preResourcePattern: " + preResourcePattern
+    	
         // Check existence of default web.xml if provided
         if(getWebDefaultXml()) {
             logger.info "Default web.xml = ${getWebDefaultXml().canonicalPath}"
@@ -297,8 +312,16 @@ abstract class AbstractTomcatRun extends Tomcat {
 
     protected void addWebappResource(File resource) {
         if(resource.exists()) {
-            server.addWebappResource(resource)
+        	boolean isPreResource = isPreResource(resource);
+	    	logger.info "creating webResourceSet for " +  resource.toURI().toURL().toString() + " with isPreResource: " + isPreResource
+            server.addWebappResource(resource, isPreResource)
         }
+    }
+    
+    private boolean isPreResource(File resource) {
+    	if (java.util.Optional.ofNullable(getPreResourcePattern()).isPresent())
+    		return preResourcePattern.matcher(resource.toURI().toURL().toString()).matches();
+    	return false;
     }
 
     /**

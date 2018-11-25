@@ -37,6 +37,7 @@ class TomcatPluginExtension {
     String ajpProtocol = DEFAULT_AJP_PROTOCOL_HANDLER
     TomcatJasperConvention jasper = new TomcatJasperConvention()
     List<TomcatUser> users = []
+    String preResourceRegex
 
     def jasper(Closure closure) {
         closure.resolveStrategy = Closure.DELEGATE_FIRST
